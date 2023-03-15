@@ -1,81 +1,60 @@
 #include <Arduino.h>
+#include <driver/adc.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-
+#define width_bith ADC_WIDTH_BIT_9 //9,10,11,12
 #define LED 2
+hw_timer_t *My_timer = NULL;
+volatile bool FLAG = true;
 
-double fatorial(int termos) 
-{
-   double aux;
-   aux = termos;
-   while(termos > 1)
-   {
-      aux = aux * (termos - 1);
-      termos--;
-   }
-
-   return (aux);
+int values[1000];
+int valores[1000];
+void IRAM_ATTR onTimer() {
+  FLAG = false;
+  digitalWrite(LED, !digitalRead(LED));
 }
 
-double potencia(double base, int expoente) 
-{
-   double resultado;
-   int i;
+void wait_for_interrupt(){
+  while(true){
+    delay(1);
+    if(FLAG==false){
+      FLAG = true;
+      break;
+    }
+  }
+} 
 
-   resultado = 1;
-   if(expoente == 0) return 1;
-   for(i = 0;i < expoente; i++) resultado = resultado * base;
-   return (resultado);
+int16_t getValue(){
+
+    int value = analogRead(4);
+    return value;
 }
-
-
-double serie_seno(double x, int termos)
-{
-   int i;
-   double resultado;
-   resultado = 0;
-
-   for(i = 0; i < termos;i++)
-   {
-      resultado += potencia(-1, i) * potencia(x, 2*i + 1) / fatorial(2*i + 1);
-   }
-
-   return (resultado);
-}
-
-double seno(double x)
-{
-   int termos = 10;
-   return serie_seno(x, termos);
-}
-
-
-void verificaPositivo(double seno){
-    if(seno>=0){
-        digitalWrite(LED, HIGH);}
-    else{
-        digitalWrite(LED,LOW);}
-}
-
 
 void setup() {
-  // put your setup code here, to run once:
-  pinMode(LED, OUTPUT);
   Serial.begin(115200);
+  adc1_config_width(ADC_WIDTH_12Bit);
+  adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_0db);
+
+
+  pinMode(LED, OUTPUT);
+  My_timer = timerBegin(0, 80, true);
+  timerAttachInterrupt(My_timer, &onTimer, true);
+  timerAlarmWrite(My_timer, 10000000, true);
+  timerAlarmEnable(My_timer);  //Just Enable
+
 }
 
 void loop() {
-  float contagem = 0;
-  float limite = 6.28;
-  float pontos = 1000.00;
-  double resultadoSeno;
-  
-  while(contagem<=limite)
-  {
-    resultadoSeno = seno(contagem);
-    verificaPositivo(resultadoSeno);
-    contagem = contagem + (limite/pontos);           
+ int adc1_get_voltage(adc1_channel_t channel);
+while(1) {
+  wait_for_interrupt();  
+  for(int i = 0; i<1000; i++){
+    valores[i] = getValue();
   }
 
-}
+  for(int i = 0; i<1000; i++){
+    Serial.printf("%d,", valores[i]);
+  }
+    Serial.printf("\n\n\n");
+
+  }
+ }
