@@ -150,10 +150,10 @@ O código utilza recursividade e loops que podem ter sido interpretados diferent
 Além disso, a diferença de desempenho também pode estar relacionada à quantidade e velocidade das memórias cache e RAM utilizadas em cada dispositivo, bem como à frequência de clock do processador. Dispositivos com mais cache e RAM, bem como processadores com frequências de clock mais elevadas, tendem a ter melhor desempenho em tarefas que exigem alto processamento.
 
 ```
-| Dispositivo  | Processador                | Núcleos | Clock     | Memórias                              | Resultado |
-|--------------|----------------------------|---------|-----------|---------------------------------------|-----------|
-| Arduino      | ATmega2560 (AVR)           | 1       | 16MHz     | 256 KB de Memória Flash, 8 KB de SRAM | 347.22mHz |
-| ESP32        | Xtensa Dual-core (LX6)     | 2       | 240MHz    | 4 MB de Memória Flash, 520 KB de SRAM | 7.251Hz   |
-| STM32F4      | ARM Cortex-M4              | 1       | 168MHz    | 1 MB de Memória Flash, 192 KB de SRAM | 60.621mHz |
+| Dispositivo  | Núcleos | Clock     | Memórias                 | Resultado |
+|--------------|---------|-----------|--------------------------|-----------|
+| Arduino      | 1       | 16MHz     | 256 KB Flash, 8 KB SRAM  | 347.22mHz |
+| ESP32        | 2       | 240MHz    | 4 MB Flash, 520 KB  SRAM | 7.251Hz   |
+| STM32F4      | 1       | 168MHz    | 1 MB Flash, 192 KB  SRAM | 60.621mHz |
 
 ```
